@@ -24,6 +24,7 @@ import { getToken } from "@/utils/storage";
 import request from "@/apis/request";
 // import {testdivice} from "../../apis/basicinfo"
 
+
 export default {
   data() {
     return {
@@ -100,6 +101,25 @@ export default {
       //   res.data.c = this.columnData;
       //   res.data.column = this.column;
       // });
+
+      const formdata = new FormData();
+      formdata.append("equipmentIdNumber", "M403324");
+      formdata.append("policeNumber", "F09003");
+
+      // const result = await devicedelete(this.formdata);
+      // console.log(result);
+      // formdata.append("name", "对讲机");
+
+      request
+        .post("/equipment/recycle", formdata, {
+          headers: {
+            "content-type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          console.log(res);
+        });
+
       const usertoken = getToken();
       var info1 = [];
       request
