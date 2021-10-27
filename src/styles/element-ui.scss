@@ -1,0 +1,60 @@
+// 覆盖 element-ui 的默认样式
+// breadcrumb
+.el-breadcrumb__inner,
+.el-breadcrumb__inner a {
+    font-weight: 400 !important;
+}
+
+.el-breadcrumb__inner a {
+    color: #97a8be;
+    cursor: text;
+}
+
+.el-upload {
+    input[type="file"] {
+        display: none !important;
+    }
+}
+
+.el-upload__input {
+    display: none;
+}
+
+// to fixed https://github.com/ElemeFE/element/issues/2461
+.el-dialog {
+    transform: none;
+    left: 0;
+    position: relative;
+    margin: 0 auto;
+}
+
+// dropdown
+.el-dropdown-menu {
+    a {
+        display: block;
+    }
+}
+
+// to fix el-date-picker css style
+.el-range-separator {
+    box-sizing: content-box;
+}
+
+.el-form-item {
+    display: flex;
+    width: 100%;
+}
+
+.el-form-item__content {
+    flex: 1;
+}
+
+.el-aside {
+    background-color: #fdfdfd;
+    color: #333;
+}
+
+.el-tree-node__content {
+    background-color: #fdfdfd;
+    padding: 20px;
+}
