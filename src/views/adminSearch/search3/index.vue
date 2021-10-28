@@ -17,28 +17,37 @@
                 <el-col :span="8">
                   <el-form-item label="设备名" prop="itemId" size="small">
                     <div class="input-area">
-                      <el-input placeholder="请输入设备名" v-model="checkForm.itemId"></el-input>
+                      <el-input
+                        placeholder="请输入设备名"
+                        v-model="checkForm.itemId"
+                      ></el-input>
                     </div>
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
                   <el-form-item label="辅警姓名" prop="policeId" size="small">
                     <div class="input-area">
-                      <el-input placeholder="请输入辅警姓名" v-model="checkForm.policeId"></el-input>
+                      <el-input
+                        placeholder="请输入辅警姓名"
+                        v-model="checkForm.policeId"
+                      ></el-input>
                     </div>
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item label="部门名" prop="departmentId" size="small">
                     <div class="input-area">
-                      <el-input placeholder="请输入部门名" v-model="checkForm.departmentId"></el-input>
+                      <el-input
+                        placeholder="请输入部门名"
+                        v-model="checkForm.departmentId"
+                      ></el-input>
                     </div>
                   </el-form-item>
                 </el-col>
                 <el-col :span="2">
-                  <el-button type="primary" size="small" @click="searchTable"
-                    >查询</el-button
-                  >
+                  <el-button type="primary" size="small" @click="searchTable">
+                    查询
+                  </el-button>
                 </el-col>
               </el-row>
             </el-form>
@@ -72,7 +81,7 @@ import request from "@/apis/request";
 
 export default {
   components: { TablePage },
-  name: "search1",
+  // name: "search3",
   data() {
     return {
       tableData: [{}],
@@ -95,6 +104,13 @@ export default {
         policeId: "",
         departmentId: "",
       },
+      infodata: {
+        idNumber: "",
+        name: "",
+        brand: "",
+        modelNumber: "haha",
+        specialProperties: {},
+      },
       currentPage: 1,
       limit: 5,
       total: 10,
@@ -108,7 +124,24 @@ export default {
       // }).catch((err)=>{
       //   console.log(err);
       // })
-      console.log(this.checkForm);
+      // const formdata = new FormData();
+      // formdata.append("idNumber", this.checkForm.departmentId);
+      // formdata.append("policeNumber", this.checkForm.policeId);
+
+      this.infodata.idNumber = this.checkForm.itemId;
+      this.infodata.name = this.checkForm.policeId;
+      this.infodata.brand = this.checkForm.departmentId;
+      const info = JSON.stringify(this.infodata);
+      request
+        .post("/equipment/add/form", info, {
+          headers: {
+            "content-type": "application/json",
+          },
+        })
+        .then((res) => {
+          console.log(res);
+        });
+      console.log(this.infodata);
     },
     handlePageChange(currentPage) {
       this.currentPage = currentPage;

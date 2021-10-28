@@ -106,10 +106,6 @@ export default {
       formdata.append("equipmentIdNumber", "M403324");
       formdata.append("policeNumber", "F09003");
 
-      // const result = await devicedelete(this.formdata);
-      // console.log(result);
-      // formdata.append("name", "对讲机");
-
       request
         .post("/equipment/recycle", formdata, {
           headers: {

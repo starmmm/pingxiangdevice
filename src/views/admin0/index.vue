@@ -5,13 +5,22 @@
         <el-card class="title-card">
           <div slot="header" class="clearfix">
             <el-row type="flex">
-              <el-col span="24"
-                ><div class="card-panel-text">设备管理——管理员</div></el-col
-              >
+              <el-col span="24">
+                <div class="card-panel-text">设备管理——管理员</div>
+              </el-col>
               <!--el-button size="small" type="primary" @click="submitForm">导入excel表格</el-button-->
-              <vue-xlsx-table @on-select-file="handleSelectedFile"
-                ><span>导入excel表格</span></vue-xlsx-table
+              <el-upload
+                ref="upload"
+                style="width: 260px"
+                class="upload"
+                action="string"
+                accept=".xlsx"
+                :http-request="submitPoliceExcel"
               >
+                <el-button size="small" style="margin-left: 150px"
+                  >辅警信息导入</el-button
+                >
+              </el-upload>
             </el-row>
           </div>
         </el-card>
@@ -29,19 +38,17 @@
       </el-col>
 
       <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="gotosearch2">
-        <div class="card-panel-icon-wrapper icon-message">
-          <svg-icon icon-class="message" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            查找设备的部门分布
+        <div class="card-panel" @click="gotosearch2">
+          <div class="card-panel-icon-wrapper icon-message">
+            <svg-icon icon-class="message" class-name="card-panel-icon" />
+          </div>
+          <div class="card-panel-description">
+            <div class="card-panel-text">查找设备的部门分布</div>
           </div>
         </div>
-      </div>
-    </el-col>
+      </el-col>
 
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
         <div class="card-panel" @click="gotosearch3">
           <div class="card-panel-icon-wrapper icon-people">
             <svg-icon icon-class="peoples" class-name="card-panel-icon" />
@@ -49,37 +56,51 @@
           <div class="card-panel-description">
             <div class="card-panel-text">查看具体设备分配</div>
           </div>
-         
         </div>
       </el-col>
 
       <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="gotosearch4">
-        <div class="card-panel-icon-wrapper icon-message">
-          <svg-icon icon-class="message" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            手动添加设备
+        <div class="card-panel" @click="gotosearch4">
+          <div class="card-panel-icon-wrapper icon-message">
+            <svg-icon icon-class="message" class-name="card-panel-icon" />
+          </div>
+          <div class="card-panel-description">
+            <div class="card-panel-text">手动添加设备</div>
           </div>
         </div>
-      </div>
-    </el-col>
+      </el-col>
     </el-row>
   </div>
 </template>
 
-
 <script>
+import request from "@/apis/request";
 export default {
   name: "Admin0",
   data() {
     return {};
   },
   methods: {
+    submitPoliceExcel(file) {
+      const formData = new FormData();
+      formData.append("file", file.file);
+      // const url = "/basicInfo/importExcel";
+      // const result = await uploadFile(url, formData);
+      const formdata = new FormData();
+      formdata.append("token", file);
+      console.log(file.file);
+      request
+        .post("/equipment/add/receiver/department/batch", formdata, {
+          headers: {
+            "content-type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          console.log(res);
+        });
+    },
     handleSelectedFile(convertedData) {
-      let data = convertedData.body;
-      console.log(data);
+      // const data = convertedData.body;
     },
     gotosearch1() {
       this.$router.push("/5/search1");
@@ -87,12 +108,12 @@ export default {
     gotosearch2() {
       this.$router.push("/5/search2");
     },
-    gotosearch3(){
+    gotosearch3() {
       this.$router.push("/5/search3");
     },
-    gotosearch4(){
+    gotosearch4() {
       this.$router.push("/5/search4");
-    }
+    },
   },
 };
 </script>
@@ -225,5 +246,4 @@ export default {
   font-size: 16px;
   margin-bottom: 12px;
 }
-
 </style>

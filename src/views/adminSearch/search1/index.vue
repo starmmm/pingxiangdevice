@@ -13,9 +13,14 @@
           <el-col span="1"></el-col>
           <el-col span="3">
             <div class="button-style">
-              <el-button size="medium" type='primary' @click="goSearch" v-loading.fullscreen.lock="fullscreenLoading"
-                ><div class="button-text">查询</div></el-button
+              <el-button
+                size="medium"
+                type="primary"
+                @click="goSearch"
+                v-loading.fullscreen.lock="fullscreenLoading"
               >
+                <div class="button-text">查询</div>
+              </el-button>
             </div>
           </el-col>
         </el-row>
@@ -30,125 +35,70 @@
 <script>
 import * as echarts from "echarts";
 import request from "@/apis/request";
+import { getToken } from "@/utils/storage";
 export default {
   data() {
     return {
-      columns: [],
-      columnData: [],
       name: [],
-      fullscreenLoading:false,
+      value: [],
+      info: [],
+      dapartmenid: [],
+      fullscreenLoading: false,
     };
   },
   mounted() {
     this.getData();
-    if (this.columns && this.columnData) {
-      this.drawLine();
-    } else console.log("err!");
   },
   watch: {},
   methods: {
     goSearch() {
-      this.fullscreenLoading=true;
-      setTimeout(()=>{
-        this.fullscreenLoading=false;
-      },2000);
+      this.fullscreenLoading = true;
+      setTimeout(() => {
+        this.fullscreenLoading = false;
+      }, 2000);
       request.post("api").then((res) => {
         console.log(res);
       });
     },
-    drawLine() {
-      let myChart = echarts.init(document.getElementById("myChart"));
+    drawLine(info) {
+      const myChart = echarts.init(document.getElementById("myChart"));
       myChart.setOption({
         tooltip: {
-          trigger: "axis",
-          axisPointer: {
-            type: "cross",
-            label: {
-              backgroundColor: "rgb(144, 185, 224)",
-            },
-          },
+          trigger: "item",
         },
-        grid: {
-          left: "5%",
-          right: "4%",
-          bottom: "3%",
-          containLabel: true,
-        },
-        xAxis: [
-          {
-            type: "category",
-            boundaryGap: false,
-            data: this.columns,
-            axisLabel: {
-              interval: 0, //代表显示所有x轴标签显示
-            },
-            axisLine: {
-              show: false,
-            },
-            axisTick: {
-              show: false,
-            },
-            axisLabel: {
-              color: "#999",
-            },
-          },
-        ],
-        yAxis: {
-          axisLine: {
-            show: false,
-          },
-          axisTick: {
-            show: false,
-          },
-          axisLabel: {
-            color: "#999",
-          },
-          type: "value",
+        legend: {
+          // orient: "horizontal",
+          orient: "vertical",
+          left: "left",
+          show: false,
         },
         series: [
           {
-            name: "邮件营销",
-            type: "line",
-            stack: "总量",
+            name: "设备数",
+            type: "pie",
+            radius: ["40%", "70%"],
+            avoidLabelOverlap: false,
             itemStyle: {
-              normal: {
-                areaStyle: {
-                  type: "default",
-                  //渐变色实现===
-                  color: new echarts.graphic.LinearGradient(
-                    0,
-                    0,
-                    0,
-                    1,
-                    //三种由深及浅的颜色
-                    [
-                      {
-                        offset: 0,
-                        color: "rgb(47, 84, 119)",
-                      },
-                      {
-                        offset: 1,
-                        color: "#ffffff",
-                      },
-                    ]
-                  ),
-                },
-                lineStyle: {
-                  //线的颜色
-                  color: "rgb(79, 154, 224)",
-                },
-                //以及在折线图每个日期点顶端显示数字
-                label: {
-                  show: true,
-                  position: "top",
-                  textStyle: {
-                    color: "rgb(59, 98, 134)",
-                  },
-                },
+              borderRadius: 10,
+              borderColor: "#fff",
+              borderWidth: 2,
+            },
+            label: {
+              show: true,
+              position: "outside",
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: "20",
+                fontWeight: "bold",
               },
             },
-            areaStyle: {},
-            data: this.columnData,
+            labelLine: {
+              show: true,
+            },
+
+            data: info,
           },
         ],
       });
@@ -158,8 +108,56 @@ export default {
       //   res.data.c = this.columnData;
       //   res.data.column = this.column;
       // });
-      this.columnData = [134, 90, 230, 210];
-      this.columns = ["周四", "周五", "周六", "周日"];
+
+      const formdata = new FormData();
+      formdata.append("equipmentIdNumber", "M403324");
+      formdata.append("policeNumber", "F09003");
+
+      request
+        .post("/equipment/recycle", formdata, {
+          headers: {
+            "content-type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          console.log(res);
+        });
+
+      const usertoken = getToken();
+      var info1 = [];
+      request
+        .get("department/member/count", {
+          params: usertoken,
+        })
+        .then((res) => {
+          console.log(res);
+          var datainfo = res.data;
+          var testdata = [
+            { value: 1048, name: "对讲机" },
+            { value: 735, name: "qwe" },
+            { value: 580, name: "辅警通" },
+            { value: 484, name: "Union Ads" },
+            { value: 300.4, name: "Video Adsqqqqqqqqqqqqqqqqqqqqqqqqq" },
+          ];
+          for (var i of datainfo.keys()) {
+            if (datainfo[i].count > 0) {
+              if (datainfo[i].department) {
+                var obj = {};
+                obj.name = datainfo[i].department;
+                obj.value = datainfo[i].count;
+                info1[i] = obj;
+              }
+            }
+          }
+          console.log(info1);
+          const infoin = JSON.parse(JSON.stringify(info1));
+          // const infoin = JSON.parse(JSON.stringify(this.info));
+          if (this.value && this.name) {
+            console.log(infoin);
+            this.drawLine(infoin);
+          } else console.log("err!");
+        });
+
     },
   },
 };
@@ -184,9 +182,9 @@ export default {
 .search-item >>> .el-input__inner {
   border: none;
 }
-.el-button--primary{
-  background-color:rgba(104, 156, 201, 0.5);
-  border:none;
-  height:40px;
+.el-button--primary {
+  background-color: rgba(104, 156, 201, 0.5);
+  border: none;
+  height: 40px;
 }
 </style>

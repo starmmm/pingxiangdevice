@@ -17,21 +17,30 @@
                 <el-col :span="8">
                   <el-form-item label="设备名" prop="itemId" size="small">
                     <div class="input-area">
-                      <el-input placeholder="请输入设备名" v-model="checkForm.itemId"></el-input>
+                      <el-input
+                        placeholder="请输入设备名"
+                        v-model="checkForm.itemId"
+                      ></el-input>
                     </div>
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
                   <el-form-item label="辅警姓名" prop="policeId" size="small">
                     <div class="input-area">
-                      <el-input placeholder="请输入辅警姓名" v-model="checkForm.policeId"></el-input>
+                      <el-input
+                        placeholder="请输入辅警姓名"
+                        v-model="checkForm.policeId"
+                      ></el-input>
                     </div>
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item label="部门名" prop="departmentId" size="small">
                     <div class="input-area">
-                      <el-input placeholder="请输入部门名" v-model="checkForm.departmentId"></el-input>
+                      <el-input
+                        placeholder="请输入部门名"
+                        v-model="checkForm.departmentId"
+                      ></el-input>
                     </div>
                   </el-form-item>
                 </el-col>
@@ -69,12 +78,21 @@
 
 <script>
 import TablePage from "@/components/TablePage";
+import request from "@/apis/request";
+
 export default {
   name: "",
   components: { TablePage },
   data() {
     return {
       tableData: [{}],
+      infodata: {
+        idNumber: "",
+        name: "",
+        brand: "",
+        modelNumber: "haha",
+        specialProperties: {},
+      },
       tableColumns: [
         {
           prop: "departmentId",
@@ -102,6 +120,20 @@ export default {
   methods: {
     addItem() {
       console.log(this.checkForm);
+      this.infodata.idNumber = this.checkForm.itemId;
+      this.infodata.name = this.checkForm.policeId;
+      this.infodata.brand = this.checkForm.departmentId;
+      const info = JSON.stringify(this.infodata);
+      request
+        .post("/equipment/add/form", info, {
+          headers: {
+            "content-type": "application/json",
+          },
+        })
+        .then((res) => {
+          console.log(res);
+        });
+      console.log(this.infodata);
     },
     handlePageChange(currentPage) {
       this.currentPage = currentPage;
